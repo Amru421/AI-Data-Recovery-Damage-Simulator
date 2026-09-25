@@ -1,0 +1,13 @@
+services:
+
+  backend:
+    build:
+      context: .
+
+    container_name: ai-recoverx-backend
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - ../data:/app/data

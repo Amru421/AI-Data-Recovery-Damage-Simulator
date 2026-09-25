@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+backend/.env
+frontend/.env
+
+# Node
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Uploaded/generated data
+data/damaged/*
+data/recovered/*
+
+# Keep directories
+!data/damaged/.gitkeep
+!data/recovered/.gitkeep
+
+# Secrets
+*.pem
+*.key
+
+# Python cache
+.pytest_cache/
+.mypy_cache/

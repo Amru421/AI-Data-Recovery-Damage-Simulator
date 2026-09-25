@@ -2,3 +2,14 @@ venv/
 __pycache__/
 .env
 *.pyc
+
+# Frontend dependencies and build output
+backend/fronted/node_modules/
+backend/fronted/dist/
+
+# Runtime-generated recovery data
+data/original/*
+data/damaged/*
+data/recovered/*
+data/uploads.json
+data/recovery_results.json

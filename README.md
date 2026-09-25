@@ -1,319 +1,112 @@
-# 🧠 AI Data Recovery & Damage Simulator
+# AI-RecoverX
 
-An AI-powered data recovery and damage simulation system that allows users to simulate different types of dataset damage, recover corrupted or missing data, and visually investigate the changes through an interactive dashboard.
+AI-RecoverX is a controlled educational simulation for AI-assisted digital data recovery. It generates damaged file fragments with known ground truth so later phases can scan, match, reconstruct, measure, classify, and explain recovery results.
 
-## 🚀 Project Overview
+This project is not a replacement for professional forensic recovery software.
 
-Data can become incomplete, corrupted, duplicated, or inconsistent during storage, transmission, or processing.
+## Current scope: Phase 1 and Phase 2
 
-The **AI Data Recovery & Damage Simulator** provides a controlled environment where users can:
+- FastAPI health endpoint at `/api/health`
+- CORS enabled for the future React frontend
+- Deterministic damage simulator
+- Supported input types: PDF, JPG/JPEG, PNG, TXT, DOCX, and ZIP
+- Fragment shuffling, deletion, and byte corruption
+- SHA-256 original hashes
+- `data/ground_truth.json` with expected fragment order and damage labels
+- Demo data that works without MongoDB or OpenAI
 
-* Create simulated damage in datasets
-* Detect missing and corrupted data
-* Apply AI-assisted recovery techniques
-* Compare original, damaged, and recovered datasets
-* Visualize data quality and recovery results
-* Investigate the effect of different damage types
-
-This project is designed for **learning, experimentation, and demonstration of AI-based data recovery techniques**.
-
----
-
-## ✨ Features
-
-### 🔴 Data Damage Simulation
-
-The application can simulate different types of data problems, such as:
-
-* Missing values
-* Corrupted values
-* Duplicate records
-* Inconsistent data
-* Random data damage
-
-Users can control the damage level and observe its effect on the dataset.
-
-### 🤖 AI-Based Data Recovery
-
-The system uses automated recovery techniques to identify and restore damaged information.
-
-Depending on the data, recovery can involve:
-
-* Missing-value restoration
-* Pattern-based recovery
-* Data consistency checks
-* Statistical or AI-assisted estimation
-* Duplicate detection and handling
-
-### 📊 Visual Investigation Dashboard
-
-The dashboard provides an easy-to-understand visual representation of:
-
-* Original dataset
-* Damaged dataset
-* Recovered dataset
-* Missing values
-* Damage percentage
-* Recovery results
-* Data quality changes
-
-### 🔍 Before vs After Analysis
-
-Users can compare:
-
-**Original Data → Damaged Data → Recovered Data**
-
-This makes it easier to understand how much information was affected and how effectively the recovery process worked.
-
----
-
-## 🏗️ System Workflow
+## Project layout
 
 ```text
-                ┌──────────────────┐
-                │   Input Dataset  │
-                └────────┬─────────┘
-                         ↓
-                ┌──────────────────┐
-                │ Damage Simulator │
-                └────────┬─────────┘
-                         ↓
-                ┌──────────────────┐
-                │ Damaged Dataset  │
-                └────────┬─────────┘
-                         ↓
-                ┌──────────────────┐
-                │ Damage Detection │
-                └────────┬─────────┘
-                         ↓
-                ┌──────────────────┐
-                │  AI Recovery     │
-                │     Engine       │
-                └────────┬─────────┘
-                         ↓
-                ┌──────────────────┐
-                │ Recovered Data   │
-                └────────┬─────────┘
-                         ↓
-                ┌──────────────────┐
-                │ Visual Dashboard │
-                └──────────────────┘
+backend/
+  app/
+    main.py
+    core/
+    api/
+    models/
+    recovery/
+    ai/
+    services/
+  requirements.txt
+  .env.example
+scripts/
+  generate_damage.py
+data/
+  original/
+  damaged/
+  recovered/
+  ground_truth.json
+python.py                 # existing Streamlit MVP
+requirements.txt          # root development dependencies
 ```
 
----
+## Setup
 
-## 🛠️ Technologies Used
+From PowerShell at the project root:
 
-* **Python**
-* **Streamlit**
-* **Pandas**
-* **NumPy**
-* **Data Processing & Analysis**
-* **AI / Machine Learning Concepts**
-* **Data Visualization**
+```powershell
+py -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
 
----
+If PowerShell blocks activation, use the interpreter directly:
 
-## 📂 Project Structure
+```powershell
+.\venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+## Run the Phase 1 API
+
+```powershell
+Set-Location backend
+..\venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+```
+
+Expected health response:
+
+```json
+{"status":"ok","mode":"demo","version":"2.0.0"}
+```
+
+Verify it in another terminal:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/api/health
+```
+
+## Run the Phase 2 simulator
+
+From the project root:
+
+```powershell
+.\venv\Scripts\python.exe scripts\generate_damage.py
+```
+
+Optional controls:
+
+```powershell
+.\venv\Scripts\python.exe scripts\generate_damage.py --fragment-size 32 --damage-percent 30 --seed 42
+```
+
+Expected output resembles:
 
 ```text
-AI-Data-Recovery-Damage-Simulator/
-│
-├── .streamlit/
-│   └── config.toml
-│
-├── python.py
-├── requirements.txt
-├── Procfile
-├── .gitignore
-└── README.md
+Generated damaged fragments for 1 file(s).
+Ground truth: ...\data\ground_truth.json
+sample.txt: 5 fragments, 0 missing, 1 corrupted
 ```
 
----
+The simulator writes shuffled fragment binaries to `data/damaged/` and metadata to `data/ground_truth.json`. Repeat the command with the same seed to reproduce the same result.
 
-## ⚙️ Installation
+## Existing Streamlit MVP
 
-### 1. Clone the repository
+The original demo remains available:
 
-```bash
-git clone https://github.com/Amru421/AI-Data-Recovery-Damage-Simulator.git
+```powershell
+.\venv\Scripts\python.exe -m streamlit run python.py --server.port 8501
 ```
 
-### 2. Open the project folder
+## Next phases
 
-```bash
-cd AI-Data-Recovery-Damage-Simulator
-```
-
-### 3. Create a virtual environment
-
-For Windows:
-
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-```bash
-venv\Scripts\activate
-```
-
-### 4. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Run the application
-
-```bash
-streamlit run python.py
-```
-
-The application will open in your browser.
-
----
-
-## 🖥️ How It Works
-
-### Step 1 — Upload or Load Data
-
-The user provides a dataset that needs to be investigated.
-
-### Step 2 — Simulate Damage
-
-The application intentionally introduces controlled damage into the dataset.
-
-For example:
-
-```text
-Original:
-
-Name       Age    Score
-Rahul      21     85
-Anita      20     91
-Kiran      22     78
-```
-
-After simulated damage:
-
-```text
-Name       Age    Score
-Rahul      21     85
-Anita      --     91
-Kiran      22     --
-```
-
-### Step 3 — Detect Damage
-
-The system analyzes the dataset and identifies:
-
-* Missing values
-* Invalid values
-* Duplicates
-* Inconsistencies
-
-### Step 4 — Recover Data
-
-The recovery engine attempts to reconstruct the damaged information using available patterns and data-processing techniques.
-
-### Step 5 — Compare Results
-
-The application displays the original, damaged, and recovered datasets so that users can understand the recovery process.
-
----
-
-## 📈 Example Recovery Flow
-
-```text
-Original Dataset
-       ↓
-Damage Simulation
-       ↓
-Corrupted Dataset
-       ↓
-Damage Detection
-       ↓
-Recovery Algorithm
-       ↓
-Recovered Dataset
-       ↓
-Accuracy / Quality Analysis
-```
-
----
-
-## 🎯 Objectives
-
-The main objectives of this project are:
-
-1. To understand how datasets can become damaged.
-2. To simulate realistic data damage in a controlled environment.
-3. To detect damaged or missing information.
-4. To explore AI-assisted data recovery.
-5. To visualize the recovery process.
-6. To compare dataset quality before and after recovery.
-7. To provide an educational platform for experimenting with data recovery.
-
----
-
-## 💡 Applications
-
-This project can be useful for:
-
-* Data cleaning experiments
-* AI and ML education
-* Data recovery research
-* Dataset quality analysis
-* Data preprocessing demonstrations
-* Academic projects
-* Hackathons
-* AI experimentation
-
----
-
-## 🔮 Future Enhancements
-
-Future versions can include:
-
-* Advanced machine-learning recovery models
-* Automatic recovery confidence scores
-* Support for larger datasets
-* Multiple recovery algorithms
-* Dataset quality scoring
-* Downloadable recovery reports
-* Interactive charts and statistics
-* Database integration
-* Cloud storage support
-* User authentication
-* Real-time recovery monitoring
-
----
-
-## ⚠️ Limitations
-
-This project is primarily intended for **simulation, experimentation, and educational purposes**.
-
-AI-assisted recovery cannot always reconstruct the exact original information when data has been permanently lost. Recovery quality depends on the available data and the type and amount of damage introduced.
-
----
-
-## 👩‍💻 Author
-
-**Amru421**
-
-GitHub:
-https://github.com/Amru421
-
----
-
-## ⭐ Support
-
-If you find this project useful for learning or experimentation, consider giving the repository a ⭐ on GitHub.
-
----
-
-## 📜 License
-
-This project is intended for educational and research purposes.
+The next requested phase is fragment signature detection and scanning. Later phases will add feature extraction, explainable ML matching, reconstruction, integrity analysis, FastAPI workflow APIs, React dashboard views, and optional MongoDB/OpenAI integrations.
